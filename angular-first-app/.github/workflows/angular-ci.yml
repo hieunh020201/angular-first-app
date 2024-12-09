@@ -1,0 +1,37 @@
+name: Angular CI/CD
+
+on:
+  push:
+    branches:
+      - develop     # Hoặc tên nhánh bạn sử dụng
+  pull_request:
+    branches:
+      - master     # Hoặc tên nhánh bạn sử dụng
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Hoặc phiên bản Node.js bạn muốn sử dụng
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test -- --watch=false --browsers=ChromeHeadlessCI
+
+      - name: Build the app
+        run: npm run build --prod
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: master  # Nhánh bạn muốn deploy lên
+          folder: dist/     # Thư mục chứa build của Angular (thường là dist/)
